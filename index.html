@@ -484,22 +484,25 @@ window.logout = async () => {
 }
 
 /* LOGIN */
-onAuthStateChanged(auth, async (user) => {
 
-  if(user){
+  currentUser = { uid: "teste" };
+loadAll();
+//onAuthStateChanged(auth, async (user) => {
 
-    currentUser = user;
+  //if(user){
 
-    loadAll();
+    //currentUser = user;
 
-  }else{
+    //loadAll();
 
-    console.log("Usuário NÃO logado");
+  //}else{
+
+    //console.log("Usuário NÃO logado");
 
     // window.location.href = "https://manu140510.github.io/bnlogin/";
 
-  }
-});
+  //}
+//});
 
 /* ABRIR ABA */
 window.openTab = function(id){
