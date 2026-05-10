@@ -418,519 +418,243 @@ import { initializeApp }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
-
   getAuth,
   onAuthStateChanged,
   signOut
-
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
-
   getFirestore,
   doc,
   setDoc,
   getDoc
-
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* FIREBASE */
 
 const firebaseConfig = {
-
-  apiKey: "AIzaSyA50GT5IBtfdlVTDF3KurYv6QfcC6I_Xjw",
-
+  apiKey: "SUA_KEY",
   authDomain: "blocodenotas-c81fc.firebaseapp.com",
-
   projectId: "blocodenotas-c81fc",
-
   storageBucket: "blocodenotas-c81fc.firebasestorage.app",
-
   messagingSenderId: "521683003523",
-
   appId: "1:521683003523:web:dc216cf12e842a8f9b53b6"
-
 };
 
 const app = initializeApp(firebaseConfig);
-
 const auth = getAuth(app);
-
 const db = getFirestore(app);
 
-const status =
-document.getElementById('status');
+const status = document.getElementById('status');
 
 let currentUser = null;
+let currentBlock = localStorage.getItem("currentBlock") || "Bloco";
 
-let currentBlock =
-localStorage.getItem("currentBlock") ||
-"Bloco";
+/* 🔥 FUNÇÃO PRINCIPAL (CORREÇÃO) */
+function safeId(name){
+  return name
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, "_")
+    .replace(/[^\w\-]/g, "");
+}
 
 /* MENU */
 
 window.toggleMenu = function(){
-
-  document
-  .getElementById("menuDropdown")
-  .classList
-  .toggle("show-menu");
-
+  document.getElementById("menuDropdown").classList.toggle("show-menu");
 }
 
-/* FECHAR MENU */
-
 window.onclick = function(event){
-
   if(!event.target.matches('.menu-btn')){
-
-    let menu =
-    document.getElementById("menuDropdown");
-
+    let menu = document.getElementById("menuDropdown");
     if(menu.classList.contains("show-menu")){
-
       menu.classList.remove("show-menu");
-
     }
-
   }
-
 }
 
 /* HOME */
-
-window.goHome = function(){
-
-  window.location.href =
-  "https://manu140510.github.io/bnconta/";
-
-}
+window.goHome = () => window.location.href = "https://manu140510.github.io/bnconta/";
 
 /* LOGOUT */
-
-window.logout = async function(){
-
+window.logout = async () => {
   await signOut(auth);
-
-  window.location.href =
-  "https://manu140510.github.io/bnlogin/";
-
+  window.location.href = "https://manu140510.github.io/bnlogin/";
 }
 
 /* LOGIN */
-
 onAuthStateChanged(auth, async (user) => {
-
   if(user){
-
     currentUser = user;
-
     loadAll();
-
   }else{
-
-    window.location.href =
-    "https://manu140510.github.io/bnlogin/";
-
+    window.location.href = "https://manu140510.github.io/bnlogin/";
   }
-
 });
 
 /* ABRIR ABA */
-
 window.openTab = function(id){
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
 
-  document
-  .querySelectorAll('.tab')
-  .forEach(tab => tab.classList.remove('active'));
-
-  document
-  .querySelectorAll('.page')
-  .forEach(page => page.classList.remove('active'));
-
-  document
-  .getElementById('tab-' + id)
-  .classList
-  .add('active');
-
-  document
-  .getElementById(id)
-  .classList
-  .add('active');
-
+  document.getElementById('tab-' + id).classList.add('active');
+  document.getElementById(id).classList.add('active');
 }
 
 /* CRIAR ABA */
-
 function createTab(name, content = ""){
 
-  const tabsContainer =
-  document.getElementById("tabsContainer");
+  let safeName = safeId(name);
 
-  const contentContainer =
-  document.getElementById("contentContainer");
+  const tabsContainer = document.getElementById("tabsContainer");
+  const contentContainer = document.getElementById("contentContainer");
 
-  let tab =
-  document.createElement('div');
-
+  let tab = document.createElement('div');
   tab.className = 'tab';
+  tab.id = 'tab-' + safeName;
 
   if(document.querySelectorAll('.tab').length === 0){
-
     tab.classList.add('active');
-
   }
 
-  tab.id = 'tab-' + name;
-
-  tab.setAttribute(
-    'onclick',
-    `openTab('${name}')`
-  );
+  tab.onclick = () => openTab(safeName);
 
   tab.innerHTML = `
-
-    <span class="tab-title">
-      ${name}
-    </span>
-
-    <span class="edit-btn"
-    onclick="editTab(event,'${name}')">
-      ✏
-    </span>
-
-    <span class="delete-tab-btn"
-    onclick="deleteTab(event,'${name}')">
-      ✖
-    </span>
-
+    <span class="tab-title">${name}</span>
+    <span class="edit-btn" onclick="editTab(event,'${name}')">✏</span>
+    <span class="delete-tab-btn" onclick="deleteTab(event,'${name}')">✖</span>
   `;
 
   tabsContainer.appendChild(tab);
 
-  let page =
-  document.createElement('div');
-
+  let page = document.createElement('div');
   page.className = 'page';
+  page.id = safeName;
 
   if(document.querySelectorAll('.page').length === 0){
-
     page.classList.add('active');
-
   }
 
-  page.id = name;
-
   page.innerHTML = `
-
-    <textarea
-    id="text-${name}"
-    placeholder="Escreva aqui...">${content}</textarea>
-
+    <textarea id="text-${safeName}" placeholder="Escreva aqui...">${content}</textarea>
   `;
 
   contentContainer.appendChild(page);
 
-  let textarea =
-  document.getElementById(`text-${name}`);
-
-  textarea.addEventListener('input', saveAll);
-
+  document.getElementById(`text-${safeName}`)
+    .addEventListener('input', saveAll);
 }
 
 /* NOVA ABA */
-
 window.addTab = function(){
+  let name = prompt("Nome da nova aba:");
+  if(!name || name.trim() === "") return;
 
-  let name =
-  prompt("Nome da nova aba:");
-
-  if(!name || name.trim() === ""){
+  if(document.getElementById('tab-' + safeId(name))){
+    alert("Já existe uma aba com esse nome!");
     return;
   }
 
   createTab(name);
-
   saveAll();
-
 }
 
 /* EDITAR */
-
 window.editTab = function(event, oldName){
-
   event.stopPropagation();
 
-  let newName =
-  prompt("Novo nome da aba:", oldName);
+  let newName = prompt("Novo nome:", oldName);
+  if(!newName) return;
 
-  if(!newName || newName.trim() === ""){
-    return;
-  }
+  let oldSafe = safeId(oldName);
+  let text = document.getElementById("text-" + oldSafe).value;
 
-  let oldText =
-  document.getElementById(
-    "text-" + oldName
-  ).value;
+  document.getElementById('tab-' + oldSafe).remove();
+  document.getElementById(oldSafe).remove();
 
-  document.getElementById(
-    "tab-" + oldName
-  ).remove();
-
-  document.getElementById(
-    oldName
-  ).remove();
-
-  createTab(newName, oldText);
-
+  createTab(newName, text);
   saveAll();
-
 }
 
 /* EXCLUIR */
-
-window.deleteTab = function(event, id){
-
+window.deleteTab = function(event, name){
   event.stopPropagation();
 
-  let confirmar =
-  confirm("Deseja excluir essa aba?");
+  if(!confirm("Excluir aba?")) return;
 
-  if(!confirmar){
-    return;
-  }
+  let safe = safeId(name);
 
-  document.getElementById(
-    'tab-' + id
-  ).remove();
-
-  document.getElementById(
-    id
-  ).remove();
+  document.getElementById('tab-' + safe).remove();
+  document.getElementById(safe).remove();
 
   saveAll();
-
 }
 
 /* SALVAR */
-
 window.saveAll = async function(){
 
-  if(!currentUser){
-    return;
-  }
+  if(!currentUser) return;
 
   let tabsData = [];
 
-  document
-  .querySelectorAll('.tab')
-  .forEach(tab => {
+  document.querySelectorAll('.tab').forEach(tab => {
 
-    let name =
-    tab.querySelector('.tab-title')
-    .innerText;
+    let name = tab.querySelector('.tab-title').innerText;
+    let safe = safeId(name);
 
-    let text =
-    document.getElementById(
-      'text-' + name
-    ).value;
+    let textarea = document.getElementById('text-' + safe);
+    if(!textarea) return;
 
     tabsData.push({
-      name:name,
-      text:text
+      name: name,
+      text: textarea.value
     });
 
   });
 
   await setDoc(
-
-    doc(
-      db,
-      "notas",
-      currentUser.uid + "_" + currentBlock
-    ),
-
+    doc(db, "notas", currentUser.uid + "_" + currentBlock),
     {
-      bloco:currentBlock,
-      tabs:tabsData
+      bloco: currentBlock,
+      tabs: tabsData
     }
-
   );
 
-  status.textContent =
-  '✓ Salvo com sucesso!';
-
-  setTimeout(() => {
-
-    status.textContent =
-    'Tudo salvo automaticamente';
-
-  }, 2000);
-
+  status.textContent = '✓ Salvo!';
+  setTimeout(() => status.textContent = 'Tudo salvo automaticamente', 2000);
 }
 
 /* CARREGAR */
-
 async function loadAll(){
 
-  const docRef =
-  doc(
-    db,
-    "notas",
-    currentUser.uid + "_" + currentBlock
-  );
-
-  const docSnap =
-  await getDoc(docRef);
+  const docRef = doc(db, "notas", currentUser.uid + "_" + currentBlock);
+  const docSnap = await getDoc(docRef);
 
   if(docSnap.exists()){
-
-    const data =
-    docSnap.data();
-
-    data.tabs.forEach(tab => {
-
-      createTab(
-        tab.name,
-        tab.text
-      );
-
+    docSnap.data().tabs.forEach(tab => {
+      createTab(tab.name, tab.text);
     });
-
   }else{
-
     createTab("Redação");
     createTab("Anotações");
     createTab("Perguntas");
-
     saveAll();
-
   }
-
 }
 
-/* TEMAS */
-
-window.setTheme = function(theme){
-
-  const root =
-  document.documentElement;
-
-  localStorage.setItem(
-    "theme",
-    theme
-  );
-
-  if(theme === 'purple'){
-
-    root.style.setProperty('--bg','#9868b4');
-    root.style.setProperty('--button','#7b2cbf');
-    root.style.setProperty('--buttonHover','#5a189a');
-
-  }
-
-  if(theme === 'red'){
-
-    root.style.setProperty('--bg','#a4161a');
-    root.style.setProperty('--button','#d62828');
-    root.style.setProperty('--buttonHover','#ba181b');
-
-  }
-
-  if(theme === 'blue'){
-
-    root.style.setProperty('--bg','#468faf');
-    root.style.setProperty('--button','#1976d2');
-    root.style.setProperty('--buttonHover','#0d47a1');
-
-  }
-
-  if(theme === 'yellow'){
-
-    root.style.setProperty('--bg','#f9c74f');
-    root.style.setProperty('--button','#f8961e');
-    root.style.setProperty('--buttonHover','#f3722c');
-
-  }
-
-  if(theme === 'black'){
-
-    root.style.setProperty('--bg','#1b1b1b');
-    root.style.setProperty('--button','#333333');
-    root.style.setProperty('--buttonHover','#555555');
-
-  }
-
-}
-
-/* FUNDO */
-
-window.changeBackground = function(event){
-
-  let file =
-  event.target.files[0];
-
-  if(file){
-
-    let reader =
-    new FileReader();
-
-    reader.onload = function(e){
-
-      document.body.style.backgroundImage =
-      `url('${e.target.result}')`;
-
-      localStorage.setItem(
-        'customBackground',
-        e.target.result
-      );
-
-    }
-
-    reader.readAsDataURL(file);
-
-  }
-
-}
-
-/* REMOVER FUNDO */
-
-window.removeBackground = function(){
-
-  document.body.style.backgroundImage =
-  'none';
-
-  localStorage.removeItem(
-    'customBackground'
-  );
-
-}
-
-/* LOAD VISUAL */
-
+/* VISUAL */
 window.onload = function(){
 
-  let savedBg =
-  localStorage.getItem(
-    'customBackground'
-  );
-
+  let savedBg = localStorage.getItem('customBackground');
   if(savedBg){
-
-    document.body.style.backgroundImage =
-    `url('${savedBg}')`;
-
+    document.body.style.backgroundImage = `url('${savedBg}')`;
   }
 
-  let savedTheme =
-  localStorage.getItem("theme");
-
+  let savedTheme = localStorage.getItem("theme");
   if(savedTheme){
-
     setTheme(savedTheme);
-
   }
-
 }
 
 </script>
