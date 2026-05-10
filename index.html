@@ -34,7 +34,6 @@ body{
   height:100vh;
   overflow:hidden;
   transition:0.3s;
-
   background-size:cover;
   background-position:center;
   background-repeat:no-repeat;
@@ -343,11 +342,7 @@ button:hover{
       ☰
     </button>
 
-    <!-- MENU -->
-
     <div class="menu-dropdown" id="menuDropdown">
-
-      <!-- LINKS -->
 
       <button class="theme-option black"
       onclick="goHome()">
@@ -383,8 +378,6 @@ button:hover{
         Preto
       </button>
 
-      <!-- PNG -->
-
       <label class="upload-bg">
 
         📷 Colocar Fundo PNG
@@ -396,8 +389,6 @@ button:hover{
         hidden>
 
       </label>
-
-      <!-- REMOVER -->
 
       <button class="remove-bg" onclick="removeBackground()">
         🗑 Remover Fundo
@@ -412,8 +403,6 @@ button:hover{
 <!-- CONTAINER -->
 
 <div class="container">
-
-  <!-- TOPO -->
 
   <div class="topbar">
 
@@ -437,81 +426,11 @@ button:hover{
 
     <!-- ABAS -->
 
-    <div class="tabs" id="tabsContainer">
-
-      <div class="tab active" onclick="openTab('Redação')" id="tab-Redação">
-
-        <span class="tab-title">Redação</span>
-
-        <span class="edit-btn" onclick="editTab(event, 'Redação')">
-          ✏
-        </span>
-
-        <span class="delete-tab-btn" onclick="deleteTab(event, 'Redação')">
-          ✖
-        </span>
-
-      </div>
-
-      <div class="tab" onclick="openTab('Anotações')" id="tab-Anotações">
-
-        <span class="tab-title">Anotações</span>
-
-        <span class="edit-btn" onclick="editTab(event, 'Anotações')">
-          ✏
-        </span>
-
-        <span class="delete-tab-btn" onclick="deleteTab(event, 'Anotações')">
-          ✖
-        </span>
-
-      </div>
-
-      <div class="tab" onclick="openTab('Perguntas')" id="tab-Perguntas">
-
-        <span class="tab-title">Perguntas</span>
-
-        <span class="edit-btn" onclick="editTab(event, 'Perguntas')">
-          ✏
-        </span>
-
-        <span class="delete-tab-btn" onclick="deleteTab(event, 'Perguntas')">
-          ✖
-        </span>
-
-      </div>
-
-    </div>
+    <div class="tabs" id="tabsContainer"></div>
 
     <!-- CONTEÚDO -->
 
-    <div class="content" id="contentContainer">
-
-      <div id="Redação" class="page active">
-
-        <textarea 
-        id="text-Redação"
-        placeholder="Escreva aqui..."></textarea>
-
-      </div>
-
-      <div id="Anotações" class="page">
-
-        <textarea 
-        id="text-Anotações"
-        placeholder="Anote aqui..."></textarea>
-
-      </div>
-
-      <div id="Perguntas" class="page">
-
-        <textarea 
-        id="text-Perguntas"
-        placeholder="Digite aqui..."></textarea>
-
-      </div>
-
-    </div>
+    <div class="content" id="contentContainer"></div>
 
     <!-- FOOTER -->
 
@@ -521,7 +440,7 @@ button:hover{
         Tudo salvo automaticamente
       </span>
 
-      <button onclick="saveNotes()">
+      <button onclick="saveAll()">
         💾 Salvar
       </button>
 
@@ -534,8 +453,6 @@ button:hover{
 <script>
 
 const status = document.getElementById('status');
-
-let areas = ['Redação', 'Anotações', 'Perguntas'];
 
 /* MENU */
 
@@ -619,46 +536,143 @@ function openTab(id){
 
 }
 
+/* CRIAR ABA */
+
+function createTab(name, content = ""){
+
+  const tabsContainer =
+  document.getElementById("tabsContainer");
+
+  const contentContainer =
+  document.getElementById("contentContainer");
+
+  /* TAB */
+
+  let tab = document.createElement('div');
+
+  tab.className = 'tab';
+
+  if(
+    document.querySelectorAll('.tab').length === 0
+  ){
+    tab.classList.add('active');
+  }
+
+  tab.id = 'tab-' + name;
+
+  tab.setAttribute(
+    'onclick',
+    `openTab('${name}')`
+  );
+
+  tab.innerHTML = `
+
+    <span class="tab-title">${name}</span>
+
+    <span class="edit-btn"
+    onclick="editTab(event, '${name}')">
+      ✏
+    </span>
+
+    <span class="delete-tab-btn"
+    onclick="deleteTab(event, '${name}')">
+      ✖
+    </span>
+
+  `;
+
+  tabsContainer.appendChild(tab);
+
+  /* PAGE */
+
+  let page = document.createElement('div');
+
+  page.className = 'page';
+
+  if(
+    document.querySelectorAll('.page').length === 0
+  ){
+    page.classList.add('active');
+  }
+
+  page.id = name;
+
+  page.innerHTML = `
+
+    <textarea
+    id="text-${name}"
+    placeholder="Escreva aqui...">${content}</textarea>
+
+  `;
+
+  contentContainer.appendChild(page);
+
+  /* AUTO SAVE */
+
+  let textarea =
+  document.getElementById(`text-${name}`);
+
+  textarea.addEventListener('input', saveAll);
+
+}
+
+/* ADICIONAR ABA */
+
+function addTab(){
+
+  let name = prompt("Nome da nova aba:");
+
+  if(!name || name.trim() === ""){
+    return;
+  }
+
+  if(localStorage.getItem("tab-" + name)){
+
+    alert("Essa aba já existe!");
+
+    return;
+
+  }
+
+  createTab(name);
+
+  saveAll();
+
+}
+
 /* EDITAR ABA */
 
-function editTab(event, oldId){
+function editTab(event, oldName){
 
   event.stopPropagation();
 
-  let newName = prompt("Novo nome da aba:");
+  let newName = prompt(
+    "Novo nome da aba:",
+    oldName
+  );
 
   if(!newName || newName.trim() === ""){
     return;
   }
 
-  let tab = document.getElementById('tab-' + oldId);
+  let oldText =
+  document.getElementById(
+    "text-" + oldName
+  ).value;
 
-  let page = document.getElementById(oldId);
+  deleteTabData(oldName);
 
-  let textarea = document.getElementById('text-' + oldId);
+  document.getElementById(
+    "tab-" + oldName
+  ).remove();
 
-  tab.id = 'tab-' + newName;
+  document.getElementById(
+    oldName
+  ).remove();
 
-  tab.setAttribute(
-    'onclick',
-    `openTab('${newName}')`
-  );
+  createTab(newName, oldText);
 
-  tab.querySelector('.tab-title').innerText = newName;
-
-  tab.querySelector('.edit-btn').setAttribute(
-    'onclick',
-    `editTab(event, '${newName}')`
-  );
-
-  tab.querySelector('.delete-tab-btn').setAttribute(
-    'onclick',
-    `deleteTab(event, '${newName}')`
-  );
-
-  page.id = newName;
-
-  textarea.id = 'text-' + newName;
+  saveAll();
 
 }
 
@@ -676,140 +690,85 @@ function deleteTab(event, id){
     return;
   }
 
-  let tab = document.getElementById('tab-' + id);
+  document.getElementById(
+    'tab-' + id
+  ).remove();
 
-  if(tab){
-    tab.remove();
-  }
+  document.getElementById(
+    id
+  ).remove();
 
-  let page = document.getElementById(id);
+  deleteTabData(id);
 
-  if(page){
-    page.remove();
-  }
-
-  localStorage.removeItem(id);
-
-  areas = areas.filter(area => area !== id);
+  saveAll();
 
 }
 
-/* ADICIONAR ABA */
+/* APAGAR DADOS */
 
-function addTab(){
+function deleteTabData(name){
 
-  let name = prompt("Nome da nova aba:");
+  let tabs =
+  JSON.parse(localStorage.getItem("tabs")) || [];
 
-  if(!name || name.trim() === ""){
-    return;
-  }
+  tabs = tabs.filter(tab => tab.name !== name);
 
-  let tab = document.createElement('div');
-
-  tab.className = 'tab';
-
-  tab.id = 'tab-' + name;
-
-  tab.setAttribute(
-    'onclick',
-    `openTab('${name}')`
+  localStorage.setItem(
+    "tabs",
+    JSON.stringify(tabs)
   );
 
-  tab.innerHTML = `
-
-    <span class="tab-title">${name}</span>
-
-    <span class="edit-btn" onclick="editTab(event, '${name}')">
-      ✏
-    </span>
-
-    <span class="delete-tab-btn" onclick="deleteTab(event, '${name}')">
-      ✖
-    </span>
-
-  `;
-
-  document
-  .getElementById('tabsContainer')
-  .appendChild(tab);
-
-  let page = document.createElement('div');
-
-  page.className = 'page';
-
-  page.id = name;
-
-  page.innerHTML = `
-
-    <textarea 
-    id="text-${name}"
-    placeholder="Escreva aqui..."></textarea>
-
-  `;
-
-  document
-  .getElementById('contentContainer')
-  .appendChild(page);
-
-  let textarea = document.getElementById(`text-${name}`);
-
-  textarea.addEventListener('input', () => {
-
-    localStorage.setItem(name, textarea.value);
-
-  });
-
-  areas.push(name);
-
 }
 
-/* SALVAR */
+/* SALVAR TUDO */
 
-function saveNotes(){
+function saveAll(){
 
-  areas.forEach(area => {
+  let tabsData = [];
 
-    let textarea = document.getElementById(`text-${area}`);
+  document.querySelectorAll('.tab')
+  .forEach(tab => {
 
-    if(textarea){
+    let name =
+    tab.querySelector('.tab-title')
+    .innerText;
 
-      localStorage.setItem(area, textarea.value);
+    let text =
+    document.getElementById(
+      'text-' + name
+    ).value;
 
-    }
+    tabsData.push({
+      name:name,
+      text:text
+    });
 
   });
 
-  status.textContent = '✓ Salvo com sucesso!';
+  localStorage.setItem(
+    "tabs",
+    JSON.stringify(tabsData)
+  );
+
+  status.textContent =
+  '✓ Salvo com sucesso!';
 
   setTimeout(() => {
 
-    status.textContent = 'Tudo salvo automaticamente';
+    status.textContent =
+    'Tudo salvo automaticamente';
 
   }, 2000);
 
 }
-
-/* AUTO SAVE */
-
-areas.forEach(area => {
-
-  let textarea = document.getElementById(`text-${area}`);
-
-  textarea.value = localStorage.getItem(area) || '';
-
-  textarea.addEventListener('input', () => {
-
-    localStorage.setItem(area, textarea.value);
-
-  });
-
-});
 
 /* TEMAS */
 
 function setTheme(theme){
 
   const root = document.documentElement;
+
+  localStorage.setItem("theme", theme);
 
   if(theme === 'purple'){
 
@@ -887,15 +846,20 @@ function removeBackground(){
 
   document.body.style.backgroundImage = 'none';
 
-  localStorage.removeItem('customBackground');
+  localStorage.removeItem(
+    'customBackground'
+  );
 
 }
 
-/* CARREGAR FUNDO */
+/* CARREGAR */
 
 window.onload = function(){
 
-  let savedBg = localStorage.getItem(
+  /* FUNDO */
+
+  let savedBg =
+  localStorage.getItem(
     'customBackground'
   );
 
@@ -903,6 +867,42 @@ window.onload = function(){
 
     document.body.style.backgroundImage =
     `url('${savedBg}')`;
+
+  }
+
+  /* TEMA */
+
+  let savedTheme =
+  localStorage.getItem("theme");
+
+  if(savedTheme){
+
+    setTheme(savedTheme);
+
+  }
+
+  /* ABAS */
+
+  let savedTabs =
+  JSON.parse(
+    localStorage.getItem("tabs")
+  );
+
+  if(savedTabs && savedTabs.length > 0){
+
+    savedTabs.forEach(tab => {
+
+      createTab(tab.name, tab.text);
+
+    });
+
+  }else{
+
+    createTab("Redação");
+    createTab("Anotações");
+    createTab("Perguntas");
+
+    saveAll();
 
   }
 
