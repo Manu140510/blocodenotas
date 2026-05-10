@@ -433,7 +433,7 @@ import {
 /* FIREBASE */
 
 const firebaseConfig = {
-  apiKey: "SUA_KEY",
+  apiKey: "AIzaSyA50GT5IBtfdlVTDF3KurYv6QfcC6I_Xjw",
   authDomain: "blocodenotas-c81fc.firebaseapp.com",
   projectId: "blocodenotas-c81fc",
   storageBucket: "blocodenotas-c81fc.firebasestorage.app",
@@ -466,12 +466,13 @@ window.toggleMenu = function(){
 }
 
 window.onclick = function(event){
-  if(!event.target.matches('.menu-btn')){
-    let menu = document.getElementById("menuDropdown");
-    if(menu.classList.contains("show-menu")){
-      menu.classList.remove("show-menu");
-    }
+
+  const menu = document.getElementById("menuDropdown");
+
+  if(!event.target.closest('.menu-container')){
+    menu.classList.remove("show-menu");
   }
+
 }
 
 /* HOME */
@@ -485,24 +486,14 @@ window.logout = async () => {
 
 /* LOGIN */
 
-  currentUser = { uid: "teste" };
-loadAll();
-//onAuthStateChanged(auth, async (user) => {
-
-  //if(user){
-
-    //currentUser = user;
-
-    //loadAll();
-
-  //}else{
-
-    //console.log("Usuário NÃO logado");
-
-    // window.location.href = "https://manu140510.github.io/bnlogin/";
-
-  //}
-//});
+ onAuthStateChanged(auth, async (user) => {
+  if(user){
+    currentUser = user;
+    loadAll();
+  }else{
+    window.location.href = "https://manu140510.github.io/bnlogin/";
+  }
+});
 
 /* ABRIR ABA */
 window.openTab = function(id){
@@ -655,7 +646,7 @@ async function loadAll(){
 }
 
 /* VISUAL */
-window.onload = function(){
+document.addEventListener("DOMContentLoaded", () => {
 
   let savedBg = localStorage.getItem('customBackground');
   if(savedBg){
@@ -666,6 +657,75 @@ window.onload = function(){
   if(savedTheme){
     setTheme(savedTheme);
   }
+
+});
+
+  window.setTheme = function(theme){
+
+  const root = document.documentElement;
+
+  localStorage.setItem("theme", theme);
+
+  if(theme === 'purple'){
+    root.style.setProperty('--bg','#9868b4');
+    root.style.setProperty('--button','#7b2cbf');
+    root.style.setProperty('--buttonHover','#5a189a');
+  }
+
+  if(theme === 'red'){
+    root.style.setProperty('--bg','#a4161a');
+    root.style.setProperty('--button','#d62828');
+    root.style.setProperty('--buttonHover','#ba181b');
+  }
+
+  if(theme === 'blue'){
+    root.style.setProperty('--bg','#468faf');
+    root.style.setProperty('--button','#1976d2');
+    root.style.setProperty('--buttonHover','#0d47a1');
+  }
+
+  if(theme === 'yellow'){
+    root.style.setProperty('--bg','#f9c74f');
+    root.style.setProperty('--button','#f8961e');
+    root.style.setProperty('--buttonHover','#f3722c');
+  }
+
+  if(theme === 'black'){
+    root.style.setProperty('--bg','#1b1b1b');
+    root.style.setProperty('--button','#333333');
+    root.style.setProperty('--buttonHover','#555555');
+  }
+
+}
+
+  window.changeBackground = function(event){
+
+  let file = event.target.files[0];
+
+  if(file){
+
+    let reader = new FileReader();
+
+    reader.onload = function(e){
+
+      document.body.style.backgroundImage =
+      `url('${e.target.result}')`;
+
+      localStorage.setItem('customBackground', e.target.result);
+
+    }
+
+    reader.readAsDataURL(file);
+
+  }
+
+}
+
+  window.removeBackground = function(){
+
+  document.body.style.backgroundImage = 'none';
+  localStorage.removeItem('customBackground');
+
 }
 
 </script>
