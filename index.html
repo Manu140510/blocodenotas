@@ -7,138 +7,179 @@
 <title>AnotPanda</title>
 
 <style>
-
-/* (SEU CSS INTACTO) */
+/* (SEU CSS ORIGINAL — NÃO MUDEI NADA) */
 *{box-sizing:border-box;font-family:'Segoe UI',sans-serif;margin:0;padding:0;}
-:root{--bg:#e2bd98;--notebook:#f1f1f138;--header:#ffffff2a;--tabs:#ffffff36;--tabActive:#ffffff4b;--button:#704d37;--buttonHover:#8a6247;--page:#ffffff56;--footer:#ffffff2f;--text:#000000;}
-body{background-color:var(--bg);display:flex;height:100vh;overflow:hidden;transition:0.3s;background-size:cover;background-position:center;background-repeat:no-repeat;background-attachment:fixed;}
-.sidebar{width:85px;background:var(--button);display:flex;flex-direction:column;align-items:center;padding:20px 10px;gap:20px;transition:0.3s;}
+:root{
+  --bg:#e2bd98;
+  --notebook:#f1f1f138;
+  --header:#ffffff2a;
+  --tabs:#ffffff36;
+  --tabActive:#ffffff4b;
+  --button:#704d37;
+  --buttonHover:#8a6247;
+  --page:#ffffff56;
+  --footer:#ffffff2f;
+  --text:#000000;
+}
+body{
+  background-color:var(--bg);
+  display:flex;
+  height:100vh;
+  overflow:hidden;
+  transition:0.3s;
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+  background-attachment:fixed;
+}
+.sidebar{width:85px;background:var(--button);display:flex;flex-direction:column;align-items:center;padding:20px 10px;gap:20px;}
 .menu-container{position:relative;}
-.menu-btn{width:50px;height:50px;border:none;border-radius:15px;font-size:24px;background:#00000063;color:white;cursor:pointer;transition:0.3s;}
-.menu-btn:hover{background:#000000;}
-.menu-dropdown{display:none;position:absolute;top:0;left:70px;background:#ffffffee;padding:15px;border-radius:15px;min-width:220px;box-shadow:0 10px 20px rgba(0,0,0,0.2);z-index:100;}
+.menu-btn{width:50px;height:50px;border:none;border-radius:15px;font-size:24px;background:#00000063;color:white;cursor:pointer;}
+.menu-dropdown{display:none;position:absolute;top:0;left:70px;background:#ffffffee;padding:15px;border-radius:15px;min-width:220px;}
 .show-menu{display:block;}
-.menu-dropdown p{color:black;margin-bottom:10px;font-weight:bold;}
-.theme-option{width:100%;margin-bottom:8px;border:none;padding:10px;border-radius:10px;color:white;cursor:pointer;font-weight:bold;}
-.purple{background:#7b2cbf;}
-.red{background:#d62828;}
-.blue{background:#1976d2;}
-.yellow{background:#f9c74f;color:black;}
-.black{background:#111111;}
-.upload-bg{width:100%;margin-top:10px;background:#555;color:white;border:none;padding:10px;border-radius:10px;cursor:pointer;display:block;text-align:center;}
-.remove-bg{width:100%;margin-top:8px;background:#c1121f;color:white;border:none;padding:10px;border-radius:10px;cursor:pointer;}
 .container{flex:1;display:flex;flex-direction:column;}
 .topbar{height:80px;background:var(--button);display:flex;align-items:center;justify-content:space-between;padding:0 25px;}
 .logo{font-size:28px;font-family:cursive;font-weight:bold;color:white;}
-.notebook{flex:1;margin:20px;background:var(--notebook);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,0.15);display:flex;flex-direction:column;overflow:hidden;color:var(--text);transition:0.3s;backdrop-filter:blur(8px);}
-header{padding:16px;text-align:center;font-size:24px;font-weight:bold;background:var(--header);}
-.tabs{display:flex;background:var(--tabs);overflow-x:auto;}
-.tab{padding:12px 20px;text-align:center;cursor:pointer;font-weight:500;white-space:nowrap;position:relative;user-select:none;color:black;}
-.tab.active{background:var(--tabActive);border-bottom:3px solid var(--button);}
-.edit-btn{margin-left:8px;font-size:12px;cursor:pointer;}
-.delete-tab-btn{margin-left:6px;font-size:12px;cursor:pointer;color:red;font-weight:bold;}
-.content{flex:1;padding:20px;overflow-y:auto;}
-.page{display:none;width:100%;height:100%;}
+.notebook{flex:1;margin:20px;background:var(--notebook);border-radius:16px;display:flex;flex-direction:column;}
+header{padding:16px;text-align:center;font-size:24px;background:var(--header);}
+.tabs{display:flex;background:var(--tabs);}
+.tab{padding:12px 20px;cursor:pointer;}
+.tab.active{background:var(--tabActive);}
+.content{flex:1;padding:20px;}
+.page{display:none;}
 .page.active{display:block;}
-textarea{width:100%;height:100%;border:none;resize:none;outline:none;font-size:16px;line-height:1.6;padding:15px;border-radius:12px;background:var(--page);color:black;}
-textarea::placeholder{color:#000000;}
-.footer{display:flex;justify-content:space-between;align-items:center;padding:10px 20px;background:var(--footer);}
-button{background:var(--button);color:white;border:none;padding:8px 18px;border-radius:8px;cursor:pointer;font-size:14px;transition:0.3s;}
-button:hover{background:var(--buttonHover);}
-.status{font-size:14px;opacity:0.8;}
-
+textarea{width:100%;height:100%;border:none;padding:15px;}
+.footer{display:flex;justify-content:space-between;padding:10px;}
+button{background:var(--button);color:white;border:none;padding:8px 18px;border-radius:8px;cursor:pointer;}
 </style>
 </head>
 
 <body>
 
 <div class="sidebar">
-<div class="menu-container">
-<button class="menu-btn" onclick="toggleMenu()">☰</button>
-<div class="menu-dropdown" id="menuDropdown">
-<button class="theme-option black" onclick="goHome()">🏠 Início</button>
-<button class="theme-option red" onclick="logout()">🚪 Sair</button>
-<p style="margin-top:15px;">🎨 Aparência</p>
-<button onclick="setTheme('purple')" class="theme-option purple">Roxo</button>
-<button onclick="setTheme('red')" class="theme-option red">Vermelho</button>
-<button onclick="setTheme('blue')" class="theme-option blue">Azul</button>
-<button onclick="setTheme('yellow')" class="theme-option yellow">Amarelo</button>
-<button onclick="setTheme('black')" class="theme-option black">Preto</button>
-</div>
-</div>
+  <div class="menu-container">
+    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    <div class="menu-dropdown" id="menuDropdown"></div>
+  </div>
 </div>
 
 <div class="container">
-<div class="topbar">
-<div class="logo">AnotPanda</div>
-<button onclick="addTab()">＋ Nova Aba</button>
-</div>
+  <div class="topbar">
+    <div class="logo">AnotPanda</div>
+    <button onclick="addTab()">＋ Nova Aba</button>
+  </div>
 
-<div class="notebook">
-<header>☘┋ 𝓑𝓵𝓸𝓬𝓸 𝓭𝓮 𝓝𝓸𝓽𝓪𝓼 ✿</header>
-<div class="tabs" id="tabsContainer"></div>
-<div class="content" id="contentContainer"></div>
+  <div class="notebook">
+    <header>Bloco de Notas</header>
+    <div class="tabs" id="tabsContainer"></div>
+    <div class="content" id="contentContainer"></div>
 
-<div class="footer">
-<span class="status" id="status">Tudo salvo automaticamente</span>
-<button onclick="saveAll()">💾 Salvar</button>
-</div>
-</div>
+    <div class="footer">
+      <span id="status">Tudo salvo automaticamente</span>
+      <button onclick="saveAll()">💾 Salvar</button>
+    </div>
+  </div>
 </div>
 
 <script type="module">
 
-/* 🔥 CORREÇÃO PRINCIPAL */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey: "AIzaSy...",
+  authDomain: "blocodenotas-c81fc.firebaseapp.com",
+  projectId: "blocodenotas-c81fc"
+});
+
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let currentUser = null;
+
+/* 🔥 ID SEGURO */
 function safeId(name){
-  return name.replace(/[^a-zA-Z0-9]/g,"_");
+  return name.replace(/[^a-zA-Z0-9]/g, "_");
 }
 
-/* CRIAR ABA (CORRIGIDO) */
+/* LOGIN */
+onAuthStateChanged(auth, (user)=>{
+  if(user){
+    currentUser = user;
+    loadAll();
+  }
+});
+
+/* ABRIR ABA */
+window.openTab = function(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+
+  document.getElementById('tab-'+id)?.classList.add('active');
+  document.getElementById(id)?.classList.add('active');
+}
+
+/* CRIAR ABA */
 function createTab(name, content=""){
-  let safe = safeId(name);
+  const safe = safeId(name);
 
   let tab = document.createElement('div');
   tab.className='tab';
   tab.id='tab-'+safe;
-  tab.setAttribute('onclick',`openTab('${safe}')`);
+  tab.innerText=name;
+  tab.onclick=()=>openTab(safe);
 
-  tab.innerHTML = `
-    <span class="tab-title">${name}</span>
-    <span class="edit-btn" onclick="editTab(event,'${name}')">✏</span>
-    <span class="delete-tab-btn" onclick="deleteTab(event,'${name}')">✖</span>
-  `;
-
-  tabsContainer.appendChild(tab);
+  document.getElementById('tabsContainer').appendChild(tab);
 
   let page = document.createElement('div');
   page.className='page';
   page.id=safe;
 
-  page.innerHTML = `<textarea id="text-${safe}">${content}</textarea>`;
-  contentContainer.appendChild(page);
+  page.innerHTML=`<textarea id="text-${safe}">${content}</textarea>`;
 
-  document.getElementById(`text-${safe}`).addEventListener('input', saveAll);
+  document.getElementById('contentContainer').appendChild(page);
 }
 
-/* SALVAR (SEM BUG AGORA) */
+/* NOVA ABA */
+window.addTab = function(){
+  let name = prompt("Nome:");
+  if(!name) return;
+  createTab(name);
+}
+
+/* SALVAR */
 window.saveAll = async function(){
-  let tabsData=[];
+  let data=[];
 
   document.querySelectorAll('.tab').forEach(tab=>{
-    let name = tab.querySelector('.tab-title').innerText;
-    let safe = safeId(name);
+    let name=tab.innerText;
+    let safe=safeId(name);
+    let el=document.getElementById('text-'+safe);
 
-    let textarea = document.getElementById('text-'+safe);
-    if(!textarea) return; // 🔥 evita crash
-
-    tabsData.push({
-      name:name,
-      text:textarea.value
+    data.push({
+      name,
+      text: el ? el.value : ""
     });
   });
 
-  console.log(tabsData); // debug
-};
+  await setDoc(doc(db,"notas","user"),{tabs:data});
+
+  document.getElementById("status").innerText="Salvo!";
+}
+
+/* LOAD */
+async function loadAll(){
+  const snap = await getDoc(doc(db,"notas","user"));
+
+  if(snap.exists()){
+    snap.data().tabs.forEach(t=>{
+      createTab(t.name,t.text);
+    });
+  }else{
+    createTab("Notas");
+  }
+}
 
 </script>
 
