@@ -4,38 +4,36 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<title>Caderno Digital</title>
+<title>AnotPanda</title>
 
 <style>
 
 *{
   box-sizing:border-box;
   font-family:'Segoe UI', sans-serif;
+  margin:0;
+  padding:0;
 }
 
 :root{
-  --bg:#000000;
+  --bg:#e2bd98;
   --notebook:#f1f1f138;
-  --header:#d4d4d438;
-  --tabs:#dcdcdc;
-  --tabActive:#ffffff3f;
-  --button:#ffffff;
-  --buttonHover:#d6d6d6;
+  --header:#ffffff2a;
+  --tabs:#ffffff36;
+  --tabActive:#ffffff4b;
+  --button:#704d37;
+  --buttonHover:#8a6247;
   --page:#ffffff56;
   --footer:#ffffff2f;
   --text:#000000;
 }
 
 body{
-  margin:0;
   background-color:var(--bg);
   display:flex;
-  justify-content:center;
-  align-items:center;
   height:100vh;
+  overflow:hidden;
   transition:0.3s;
-
-  /* FUNDO PNG */
 
   background-size:cover;
   background-position:center;
@@ -43,37 +41,17 @@ body{
   background-attachment:fixed;
 }
 
-.notebook{
-  width:90%;
-  max-width:900px;
-  height:90vh;
-  background:var(--notebook);
-  border-radius:16px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.15);
+/* SIDEBAR */
+
+.sidebar{
+  width:85px;
+  background:var(--button);
   display:flex;
   flex-direction:column;
-  overflow:hidden;
-  color:var(--text);
-  transition:0.3s;
-  backdrop-filter:blur(8px);
-}
-
-header{
-  padding:16px;
-  text-align:center;
-  font-size:24px;
-  font-weight:bold;
-  background:var(--header);
-}
-
-/* TOPO */
-
-.top-options{
-  display:flex;
-  justify-content:space-between;
   align-items:center;
-  padding:10px 15px;
-  background:#ffffff18;
+  padding:20px 10px;
+  gap:20px;
+  transition:0.3s;
 }
 
 /* MENU */
@@ -83,27 +61,36 @@ header{
 }
 
 .menu-btn{
-  width:45px;
-  height:45px;
+  width:50px;
+  height:50px;
   border:none;
-  border-radius:12px;
-  font-size:22px;
-  background:var(--button);
-  color:black;
+  border-radius:15px;
+  font-size:24px;
+  background:#00000063;
+  color:white;
   cursor:pointer;
+  transition:0.3s;
+}
+
+.menu-btn:hover{
+  background:#000000;
 }
 
 .menu-dropdown{
   display:none;
   position:absolute;
-  top:55px;
-  left:0;
+  top:0;
+  left:70px;
   background:#ffffffee;
   padding:15px;
   border-radius:15px;
   min-width:220px;
   box-shadow:0 10px 20px rgba(0,0,0,0.2);
   z-index:100;
+}
+
+.show-menu{
+  display:block;
 }
 
 .menu-dropdown p{
@@ -180,10 +167,57 @@ header{
   cursor:pointer;
 }
 
-/* MOSTRAR MENU */
+/* CONTAINER */
 
-.show-menu{
-  display:block;
+.container{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
+
+/* TOPO */
+
+.topbar{
+  height:80px;
+  background:var(--button);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 25px;
+  transition:0.3s;
+}
+
+/* LOGO */
+
+.logo{
+  font-size:28px;
+  font-family:cursive;
+  font-weight:bold;
+  color:white;
+}
+
+/* NOTEBOOK */
+
+.notebook{
+  flex:1;
+  margin:20px;
+  background:var(--notebook);
+  border-radius:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.15);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  color:var(--text);
+  transition:0.3s;
+  backdrop-filter:blur(8px);
+}
+
+header{
+  padding:16px;
+  text-align:center;
+  font-size:24px;
+  font-weight:bold;
+  background:var(--header);
 }
 
 /* ABAS */
@@ -276,7 +310,7 @@ textarea::placeholder{
 
 button{
   background:var(--button);
-  color:black;
+  color:white;
   border:none;
   padding:8px 18px;
   border-radius:8px;
@@ -299,15 +333,9 @@ button:hover{
 
 <body>
 
-<div class="notebook">
+<!-- SIDEBAR -->
 
-<header>
-☘┋ 𝓑𝓵𝓸𝓬𝓸 𝓭𝓮 𝓝𝓸𝓽𝓪𝓼 ✿
-</header>
-
-<!-- TOPO -->
-
-<div class="top-options">
+<div class="sidebar">
 
   <div class="menu-container">
 
@@ -315,9 +343,25 @@ button:hover{
       ☰
     </button>
 
+    <!-- MENU -->
+
     <div class="menu-dropdown" id="menuDropdown">
 
-      <p>🎨 Aparência</p>
+      <!-- LINKS -->
+
+      <button class="theme-option black"
+      onclick="goHome()">
+        🏠 Início
+      </button>
+
+      <button class="theme-option red"
+      onclick="logout()">
+        🚪 Sair
+      </button>
+
+      <p style="margin-top:15px;">
+        🎨 Aparência
+      </p>
 
       <button class="theme-option purple" onclick="setTheme('purple')">
         Roxo
@@ -363,103 +407,127 @@ button:hover{
 
   </div>
 
-  <!-- NOVA ABA -->
-
-  <button onclick="addTab()">＋ Nova Aba</button>
-
 </div>
 
-<!-- ABAS -->
+<!-- CONTAINER -->
 
-<div class="tabs" id="tabsContainer">
+<div class="container">
 
-  <div class="tab active" onclick="openTab('Redação')" id="tab-Redação">
+  <!-- TOPO -->
 
-    <span class="tab-title">Redação</span>
+  <div class="topbar">
 
-    <span class="edit-btn" onclick="editTab(event, 'Redação')">
-      ✏
-    </span>
+    <div class="logo">
+      AnotPanda
+    </div>
 
-    <span class="delete-tab-btn" onclick="deleteTab(event, 'Redação')">
-      ✖
-    </span>
-
-  </div>
-
-  <div class="tab" onclick="openTab('Anotações')" id="tab-Anotações">
-
-    <span class="tab-title">Anotações</span>
-
-    <span class="edit-btn" onclick="editTab(event, 'Anotações')">
-      ✏
-    </span>
-
-    <span class="delete-tab-btn" onclick="deleteTab(event, 'Anotações')">
-      ✖
-    </span>
+    <button onclick="addTab()">
+      ＋ Nova Aba
+    </button>
 
   </div>
 
-  <div class="tab" onclick="openTab('Perguntas')" id="tab-Perguntas">
+  <!-- NOTEBOOK -->
 
-    <span class="tab-title">Perguntas</span>
+  <div class="notebook">
 
-    <span class="edit-btn" onclick="editTab(event, 'Perguntas')">
-      ✏
-    </span>
+    <header>
+      ☘┋ 𝓑𝓵𝓸𝓬𝓸 𝓭𝓮 𝓝𝓸𝓽𝓪𝓼 ✿
+    </header>
 
-    <span class="delete-tab-btn" onclick="deleteTab(event, 'Perguntas')">
-      ✖
-    </span>
+    <!-- ABAS -->
+
+    <div class="tabs" id="tabsContainer">
+
+      <div class="tab active" onclick="openTab('Redação')" id="tab-Redação">
+
+        <span class="tab-title">Redação</span>
+
+        <span class="edit-btn" onclick="editTab(event, 'Redação')">
+          ✏
+        </span>
+
+        <span class="delete-tab-btn" onclick="deleteTab(event, 'Redação')">
+          ✖
+        </span>
+
+      </div>
+
+      <div class="tab" onclick="openTab('Anotações')" id="tab-Anotações">
+
+        <span class="tab-title">Anotações</span>
+
+        <span class="edit-btn" onclick="editTab(event, 'Anotações')">
+          ✏
+        </span>
+
+        <span class="delete-tab-btn" onclick="deleteTab(event, 'Anotações')">
+          ✖
+        </span>
+
+      </div>
+
+      <div class="tab" onclick="openTab('Perguntas')" id="tab-Perguntas">
+
+        <span class="tab-title">Perguntas</span>
+
+        <span class="edit-btn" onclick="editTab(event, 'Perguntas')">
+          ✏
+        </span>
+
+        <span class="delete-tab-btn" onclick="deleteTab(event, 'Perguntas')">
+          ✖
+        </span>
+
+      </div>
+
+    </div>
+
+    <!-- CONTEÚDO -->
+
+    <div class="content" id="contentContainer">
+
+      <div id="Redação" class="page active">
+
+        <textarea 
+        id="text-Redação"
+        placeholder="Escreva aqui..."></textarea>
+
+      </div>
+
+      <div id="Anotações" class="page">
+
+        <textarea 
+        id="text-Anotações"
+        placeholder="Anote aqui..."></textarea>
+
+      </div>
+
+      <div id="Perguntas" class="page">
+
+        <textarea 
+        id="text-Perguntas"
+        placeholder="Digite aqui..."></textarea>
+
+      </div>
+
+    </div>
+
+    <!-- FOOTER -->
+
+    <div class="footer">
+
+      <span class="status" id="status">
+        Tudo salvo automaticamente
+      </span>
+
+      <button onclick="saveNotes()">
+        💾 Salvar
+      </button>
+
+    </div>
 
   </div>
-
-</div>
-
-<!-- CONTEÚDO -->
-
-<div class="content" id="contentContainer">
-
-  <div id="Redação" class="page active">
-
-    <textarea 
-    id="text-Redação"
-    placeholder="Escreva aqui..."></textarea>
-
-  </div>
-
-  <div id="Anotações" class="page">
-
-    <textarea 
-    id="text-Anotações"
-    placeholder="Anote aqui..."></textarea>
-
-  </div>
-
-  <div id="Perguntas" class="page">
-
-    <textarea 
-    id="text-Perguntas"
-    placeholder="Digite aqui..."></textarea>
-
-  </div>
-
-</div>
-
-<!-- FOOTER -->
-
-<div class="footer">
-
-  <span class="status" id="status">
-    Tudo salvo automaticamente
-  </span>
-
-  <button onclick="saveNotes()">
-    💾 Salvar
-  </button>
-
-</div>
 
 </div>
 
@@ -493,6 +561,35 @@ window.onclick = function(event){
       menu.classList.remove("show-menu");
 
     }
+
+  }
+
+}
+
+/* INÍCIO */
+
+function goHome(){
+
+  window.location.href =
+  "https://manu140510.github.io/bnconta/";
+
+}
+
+/* SAIR */
+
+function logout(){
+
+  let confirmar = confirm(
+    "Deseja sair da conta?"
+  );
+
+  if(confirmar){
+
+    localStorage.removeItem("userName");
+    localStorage.removeItem("profileImage");
+
+    window.location.href =
+    "https://manu140510.github.io/bnconta/";
 
   }
 
@@ -771,16 +868,6 @@ function changeBackground(event){
       document.body.style.backgroundImage =
       `url('${e.target.result}')`;
 
-      /* AJUSTE PERFEITO */
-
-      document.body.style.backgroundSize = 'cover';
-
-      document.body.style.backgroundPosition = 'center';
-
-      document.body.style.backgroundRepeat = 'no-repeat';
-
-      document.body.style.backgroundAttachment = 'fixed';
-
       localStorage.setItem(
         'customBackground',
         e.target.result
@@ -816,14 +903,6 @@ window.onload = function(){
 
     document.body.style.backgroundImage =
     `url('${savedBg}')`;
-
-    document.body.style.backgroundSize = 'cover';
-
-    document.body.style.backgroundPosition = 'center';
-
-    document.body.style.backgroundRepeat = 'no-repeat';
-
-    document.body.style.backgroundAttachment = 'fixed';
 
   }
 
