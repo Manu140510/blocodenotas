@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>Caderno Digital</title>
+
+<style>
+
+*{
+  box-sizing:border-box;
+  font-family:'Segoe UI', sans-serif;
+}
+
+:root{
+  --bg:#000000;
+  --notebook:#f1f1f138;
+  --header:#d4d4d438;
+  --tabs:#dcdcdc;
+  --tabActive:#ffffff3f;
+  --button:#ffffff;
+  --buttonHover:#d6d6d6;
+  --page:#ffffff56;
+  --footer:#ffffff2f;
+  --text:#000000;
+}
+
+body{
+  margin:0;
+  background-color:var(--bg);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  transition:0.3s;
+
+  /* FUNDO PNG */
+
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+  background-attachment:fixed;
+}
+
+.notebook{
+  width:90%;
+  max-width:900px;
+  height:90vh;
+  background:var(--notebook);
+  border-radius:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.15);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  color:var(--text);
+  transition:0.3s;
+  backdrop-filter:blur(8px);
+}
+
+header{
+  padding:16px;
+  text-align:center;
+  font-size:24px;
+  font-weight:bold;
+  background:var(--header);
+}
+
+/* TOPO */
+
+.top-options{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 15px;
+  background:#ffffff18;
+}
+
+/* MENU */
+
+.menu-container{
+  position:relative;
+}
+
+.menu-btn{
+  width:45px;
+  height:45px;
+  border:none;
+  border-radius:12px;
+  font-size:22px;
+  background:var(--button);
+  color:black;
+  cursor:pointer;
+}
+
+.menu-dropdown{
+  display:none;
+  position:absolute;
+  top:55px;
+  left:0;
+  background:#ffffffee;
+  padding:15px;
+  border-radius:15px;
+  min-width:220px;
+  box-shadow:0 10px 20px rgba(0,0,0,0.2);
+  z-index:100;
+}
+
+.menu-dropdown p{
+  color:black;
+  margin-bottom:10px;
+  font-weight:bold;
+}
+
+/* BOTÕES DAS CORES */
+
+.theme-option{
+  width:100%;
+  margin-bottom:8px;
+  border:none;
+  padding:10px;
+  border-radius:10px;
+  color:white;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.theme-option:hover{
+  opacity:0.9;
+}
+
+/* CORES */
+
+.purple{
+  background:#7b2cbf;
+}
+
+.red{
+  background:#d62828;
+}
+
+.blue{
+  background:#1976d2;
+}
+
+.yellow{
+  background:#f9c74f;
+  color:black;
+}
+
+.black{
+  background:#111111;
+}
+
+/* PNG */
+
+.upload-bg{
+  width:100%;
+  margin-top:10px;
+  background:#555;
+  color:white;
+  border:none;
+  padding:10px;
+  border-radius:10px;
+  cursor:pointer;
+  display:block;
+  text-align:center;
+}
+
+/* REMOVER FUNDO */
+
+.remove-bg{
+  width:100%;
+  margin-top:8px;
+  background:#c1121f;
+  color:white;
+  border:none;
+  padding:10px;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+/* MOSTRAR MENU */
+
+.show-menu{
+  display:block;
+}
+
+/* ABAS */
+
+.tabs{
+  display:flex;
+  background:var(--tabs);
+  overflow-x:auto;
+}
+
+.tab{
+  padding:12px 20px;
+  text-align:center;
+  cursor:pointer;
+  font-weight:500;
+  white-space:nowrap;
+  position:relative;
+  user-select:none;
+  color:black;
+}
+
+.tab.active{
+  background:var(--tabActive);
+  border-bottom:3px solid var(--button);
+}
+
+/* EDITAR */
+
+.edit-btn{
+  margin-left:8px;
+  font-size:12px;
+  cursor:pointer;
+}
+
+/* EXCLUIR */
+
+.delete-tab-btn{
+  margin-left:6px;
+  font-size:12px;
+  cursor:pointer;
+  color:red;
+  font-weight:bold;
+}
+
+/* CONTEÚDO */
+
+.content{
+  flex:1;
+  padding:20px;
+  overflow-y:auto;
+}
+
+.page{
+  display:none;
+  width:100%;
+  height:100%;
+}
+
+.page.active{
+  display:block;
+}
+
+textarea{
+  width:100%;
+  height:100%;
+  border:none;
+  resize:none;
+  outline:none;
+  font-size:16px;
+  line-height:1.6;
+  padding:15px;
+  border-radius:12px;
+  background:var(--page);
+  color:black;
+}
+
+textarea::placeholder{
+  color:#000000;
+}
+
+/* FOOTER */
+
+.footer{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 20px;
+  background:var(--footer);
+}
+
+button{
+  background:var(--button);
+  color:black;
+  border:none;
+  padding:8px 18px;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:14px;
+  transition:0.3s;
+}
+
+button:hover{
+  background:var(--buttonHover);
+}
+
+.status{
+  font-size:14px;
+  opacity:0.8;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="notebook">
+
+<header>
+☘┋ 𝓑𝓵𝓸𝓬𝓸 𝓭𝓮 𝓝𝓸𝓽𝓪𝓼 ✿
+</header>
+
+<!-- TOPO -->
+
+<div class="top-options">
+
+  <div class="menu-container">
+
+    <button class="menu-btn" onclick="toggleMenu()">
+      ☰
+    </button>
+
+    <div class="menu-dropdown" id="menuDropdown">
+
+      <p>🎨 Aparência</p>
+
+      <button class="theme-option purple" onclick="setTheme('purple')">
+        Roxo
+      </button>
+
+      <button class="theme-option red" onclick="setTheme('red')">
+        Vermelho
+      </button>
+
+      <button class="theme-option blue" onclick="setTheme('blue')">
+        Azul
+      </button>
+
+      <button class="theme-option yellow" onclick="setTheme('yellow')">
+        Amarelo
+      </button>
+
+      <button class="theme-option black" onclick="setTheme('black')">
+        Preto
+      </button>
+
+      <!-- PNG -->
+
+      <label class="upload-bg">
+
+        📷 Colocar Fundo PNG
+
+        <input 
+        type="file"
+        accept="image/png, image/jpeg"
+        onchange="changeBackground(event)"
+        hidden>
+
+      </label>
+
+      <!-- REMOVER -->
+
+      <button class="remove-bg" onclick="removeBackground()">
+        🗑 Remover Fundo
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- NOVA ABA -->
+
+  <button onclick="addTab()">＋ Nova Aba</button>
+
+</div>
+
+<!-- ABAS -->
+
+<div class="tabs" id="tabsContainer">
+
+  <div class="tab active" onclick="openTab('Redação')" id="tab-Redação">
+
+    <span class="tab-title">Redação</span>
+
+    <span class="edit-btn" onclick="editTab(event, 'Redação')">
+      ✏
+    </span>
+
+    <span class="delete-tab-btn" onclick="deleteTab(event, 'Redação')">
+      ✖
+    </span>
+
+  </div>
+
+  <div class="tab" onclick="openTab('Anotações')" id="tab-Anotações">
+
+    <span class="tab-title">Anotações</span>
+
+    <span class="edit-btn" onclick="editTab(event, 'Anotações')">
+      ✏
+    </span>
+
+    <span class="delete-tab-btn" onclick="deleteTab(event, 'Anotações')">
+      ✖
+    </span>
+
+  </div>
+
+  <div class="tab" onclick="openTab('Perguntas')" id="tab-Perguntas">
+
+    <span class="tab-title">Perguntas</span>
+
+    <span class="edit-btn" onclick="editTab(event, 'Perguntas')">
+      ✏
+    </span>
+
+    <span class="delete-tab-btn" onclick="deleteTab(event, 'Perguntas')">
+      ✖
+    </span>
+
+  </div>
+
+</div>
+
+<!-- CONTEÚDO -->
+
+<div class="content" id="contentContainer">
+
+  <div id="Redação" class="page active">
+
+    <textarea 
+    id="text-Redação"
+    placeholder="Escreva aqui..."></textarea>
+
+  </div>
+
+  <div id="Anotações" class="page">
+
+    <textarea 
+    id="text-Anotações"
+    placeholder="Anote aqui..."></textarea>
+
+  </div>
+
+  <div id="Perguntas" class="page">
+
+    <textarea 
+    id="text-Perguntas"
+    placeholder="Digite aqui..."></textarea>
+
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+
+<div class="footer">
+
+  <span class="status" id="status">
+    Tudo salvo automaticamente
+  </span>
+
+  <button onclick="saveNotes()">
+    💾 Salvar
+  </button>
+
+</div>
+
+</div>
+
+<script>
+
+const status = document.getElementById('status');
+
+let areas = ['Redação', 'Anotações', 'Perguntas'];
+
+/* MENU */
+
+function toggleMenu(){
+
+  document
+  .getElementById("menuDropdown")
+  .classList
+  .toggle("show-menu");
+
+}
+
+/* FECHAR MENU */
+
+window.onclick = function(event){
+
+  if(!event.target.matches('.menu-btn')){
+
+    let menu = document.getElementById("menuDropdown");
+
+    if(menu.classList.contains("show-menu")){
+
+      menu.classList.remove("show-menu");
+
+    }
+
+  }
+
+}
+
+/* ABRIR ABA */
+
+function openTab(id){
+
+  document
+  .querySelectorAll('.tab')
+  .forEach(tab => tab.classList.remove('active'));
+
+  document
+  .querySelectorAll('.page')
+  .forEach(page => page.classList.remove('active'));
+
+  document
+  .getElementById('tab-' + id)
+  .classList
+  .add('active');
+
+  document
+  .getElementById(id)
+  .classList
+  .add('active');
+
+}
+
+/* EDITAR ABA */
+
+function editTab(event, oldId){
+
+  event.stopPropagation();
+
+  let newName = prompt("Novo nome da aba:");
+
+  if(!newName || newName.trim() === ""){
+    return;
+  }
+
+  let tab = document.getElementById('tab-' + oldId);
+
+  let page = document.getElementById(oldId);
+
+  let textarea = document.getElementById('text-' + oldId);
+
+  tab.id = 'tab-' + newName;
+
+  tab.setAttribute(
+    'onclick',
+    `openTab('${newName}')`
+  );
+
+  tab.querySelector('.tab-title').innerText = newName;
+
+  tab.querySelector('.edit-btn').setAttribute(
+    'onclick',
+    `editTab(event, '${newName}')`
+  );
+
+  tab.querySelector('.delete-tab-btn').setAttribute(
+    'onclick',
+    `deleteTab(event, '${newName}')`
+  );
+
+  page.id = newName;
+
+  textarea.id = 'text-' + newName;
+
+}
+
+/* EXCLUIR ABA */
+
+function deleteTab(event, id){
+
+  event.stopPropagation();
+
+  let confirmDelete = confirm(
+    "Deseja excluir essa aba?"
+  );
+
+  if(!confirmDelete){
+    return;
+  }
+
+  let tab = document.getElementById('tab-' + id);
+
+  if(tab){
+    tab.remove();
+  }
+
+  let page = document.getElementById(id);
+
+  if(page){
+    page.remove();
+  }
+
+  localStorage.removeItem(id);
+
+  areas = areas.filter(area => area !== id);
+
+}
+
+/* ADICIONAR ABA */
+
+function addTab(){
+
+  let name = prompt("Nome da nova aba:");
+
+  if(!name || name.trim() === ""){
+    return;
+  }
+
+  let tab = document.createElement('div');
+
+  tab.className = 'tab';
+
+  tab.id = 'tab-' + name;
+
+  tab.setAttribute(
+    'onclick',
+    `openTab('${name}')`
+  );
+
+  tab.innerHTML = `
+
+    <span class="tab-title">${name}</span>
+
+    <span class="edit-btn" onclick="editTab(event, '${name}')">
+      ✏
+    </span>
+
+    <span class="delete-tab-btn" onclick="deleteTab(event, '${name}')">
+      ✖
+    </span>
+
+  `;
+
+  document
+  .getElementById('tabsContainer')
+  .appendChild(tab);
+
+  let page = document.createElement('div');
+
+  page.className = 'page';
+
+  page.id = name;
+
+  page.innerHTML = `
+
+    <textarea 
+    id="text-${name}"
+    placeholder="Escreva aqui..."></textarea>
+
+  `;
+
+  document
+  .getElementById('contentContainer')
+  .appendChild(page);
+
+  let textarea = document.getElementById(`text-${name}`);
+
+  textarea.addEventListener('input', () => {
+
+    localStorage.setItem(name, textarea.value);
+
+  });
+
+  areas.push(name);
+
+}
+
+/* SALVAR */
+
+function saveNotes(){
+
+  areas.forEach(area => {
+
+    let textarea = document.getElementById(`text-${area}`);
+
+    if(textarea){
+
+      localStorage.setItem(area, textarea.value);
+
+    }
+
+  });
+
+  status.textContent = '✓ Salvo com sucesso!';
+
+  setTimeout(() => {
+
+    status.textContent = 'Tudo salvo automaticamente';
+
+  }, 2000);
+
+}
+
+/* AUTO SAVE */
+
+areas.forEach(area => {
+
+  let textarea = document.getElementById(`text-${area}`);
+
+  textarea.value = localStorage.getItem(area) || '';
+
+  textarea.addEventListener('input', () => {
+
+    localStorage.setItem(area, textarea.value);
+
+  });
+
+});
+
+/* TEMAS */
+
+function setTheme(theme){
+
+  const root = document.documentElement;
+
+  if(theme === 'purple'){
+
+    root.style.setProperty('--bg', '#9868b4');
+    root.style.setProperty('--button', '#7b2cbf');
+    root.style.setProperty('--buttonHover', '#5a189a');
+
+  }
+
+  if(theme === 'red'){
+
+    root.style.setProperty('--bg', '#a4161a');
+    root.style.setProperty('--button', '#d62828');
+    root.style.setProperty('--buttonHover', '#ba181b');
+
+  }
+
+  if(theme === 'blue'){
+
+    root.style.setProperty('--bg', '#468faf');
+    root.style.setProperty('--button', '#1976d2');
+    root.style.setProperty('--buttonHover', '#0d47a1');
+
+  }
+
+  if(theme === 'yellow'){
+
+    root.style.setProperty('--bg', '#f9c74f');
+    root.style.setProperty('--button', '#f8961e');
+    root.style.setProperty('--buttonHover', '#f3722c');
+
+  }
+
+  if(theme === 'black'){
+
+    root.style.setProperty('--bg', '#1b1b1b');
+    root.style.setProperty('--button', '#333333');
+    root.style.setProperty('--buttonHover', '#555555');
+
+  }
+
+}
+
+/* FUNDO PNG */
+
+function changeBackground(event){
+
+  let file = event.target.files[0];
+
+  if(file){
+
+    let reader = new FileReader();
+
+    reader.onload = function(e){
+
+      document.body.style.backgroundImage =
+      `url('${e.target.result}')`;
+
+      /* AJUSTE PERFEITO */
+
+      document.body.style.backgroundSize = 'cover';
+
+      document.body.style.backgroundPosition = 'center';
+
+      document.body.style.backgroundRepeat = 'no-repeat';
+
+      document.body.style.backgroundAttachment = 'fixed';
+
+      localStorage.setItem(
+        'customBackground',
+        e.target.result
+      );
+
+    }
+
+    reader.readAsDataURL(file);
+
+  }
+
+}
+
+/* REMOVER FUNDO */
+
+function removeBackground(){
+
+  document.body.style.backgroundImage = 'none';
+
+  localStorage.removeItem('customBackground');
+
+}
+
+/* CARREGAR FUNDO */
+
+window.onload = function(){
+
+  let savedBg = localStorage.getItem(
+    'customBackground'
+  );
+
+  if(savedBg){
+
+    document.body.style.backgroundImage =
+    `url('${savedBg}')`;
+
+    document.body.style.backgroundSize = 'cover';
+
+    document.body.style.backgroundPosition = 'center';
+
+    document.body.style.backgroundRepeat = 'no-repeat';
+
+    document.body.style.backgroundAttachment = 'fixed';
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>
