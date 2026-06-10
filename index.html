@@ -651,20 +651,6 @@ window.saveAll = async function(){
 
 }
 
-  });
-
-  await setDoc(
-    doc(db, "notas", currentUser.uid + "_" + currentBlock),
-    {
-      bloco: currentBlock,
-      tabs: tabsData
-    }
-  );
-
-  status.textContent = '✓ Salvo!';
-  setTimeout(() => status.textContent = 'Tudo salvo automaticamente', 2000);
-}
-
 /* CARREGAR */
 async function loadAll(){
 
