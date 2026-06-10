@@ -596,7 +596,13 @@ window.deleteTab = function(event, name){
 /* SALVAR */
 window.saveAll = async function(){
 
-  if(!currentUser) return;
+  console.log("Botão Salvar clicado");
+  console.log("Usuário:", currentUser);
+
+  if(!currentUser){
+    alert("Usuário não está logado!");
+    return;
+  }
 
   let tabsData = [];
 
@@ -612,6 +618,38 @@ window.saveAll = async function(){
       name: name,
       text: textarea.value
     });
+
+  });
+
+  try {
+
+    await setDoc(
+      doc(db, "notas", currentUser.uid + "_" + currentBlock),
+      {
+        bloco: currentBlock,
+        tabs: tabsData
+      }
+    );
+
+    console.log("Salvo com sucesso!");
+
+    status.textContent = '✓ Salvo!';
+    setTimeout(() => {
+      status.textContent = 'Tudo salvo automaticamente';
+    }, 2000);
+
+  } catch(error){
+
+    console.error("Erro ao salvar:", error);
+
+    alert(
+      "Erro ao salvar:\n\n" +
+      error.message
+    );
+
+  }
+
+}
 
   });
 
